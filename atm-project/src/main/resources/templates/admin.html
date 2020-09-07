@@ -21,9 +21,6 @@
 
     <div class="navbar-collapse collapse">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                Logged user: <span sec:authentication="name">Bob</span>
-            </li>
             <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0 bg-light"
                   th:action="@{/logout}"  method="post">
                 <button class="btn btn-outline-success my-2 my-sm-0">Logout</button>
@@ -55,11 +52,13 @@
     </div>
 
     <div class="content p-4">
-        <h2 class="mb-4">Reading a Files</h2>
-
-        <form th:action="@{/user/new}">
-            <button type="submit" class="btn btn-secondary">Add User</button>
-        </form><br>
+        <h2 class="mb-4">Work with files</h2>
+        <h5 class="mb-4">Report about authUser</h5>
+        <span th:text="${report.getReportMessage()}"></span>
+        <br><br>
+        <form>
+            <button type="submit" class="btn btn-secondary">Write</button>
+        </form>
     </div>
 </div>
 
