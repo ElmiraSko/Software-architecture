@@ -64,6 +64,7 @@ public class AccountController {
         }
 
         accountRepository.save(accountDb);
+
         return "redirect:/money";
     }
 
