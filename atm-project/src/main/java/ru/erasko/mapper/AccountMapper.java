@@ -14,12 +14,28 @@ import java.util.List;
 public class AccountMapper {
 
     private Connection connection;
+    private final AccountIdentityMap accountIdentityMap;
 
-    public AccountMapper(@Autowired DataSource dataSource) {
+    public AccountMapper(@Autowired DataSource dataSource,
+                         AccountIdentityMap accountIdentityMap) {
+        this.accountIdentityMap = accountIdentityMap;
         try {
             this.connection = dataSource.getConnection();
         } catch (SQLException ex) {
             ex.getStackTrace();
+        }
+    }
+
+    public Account getAccountById(long id) throws Exception {
+        Account account = accountIdentityMap.isContains(id);
+        if(account != null)
+        {
+            return account;
+        }
+        else {
+            Account account1 = findById(id);
+            accountIdentityMap.add(account1);
+            return account1;
         }
     }
 

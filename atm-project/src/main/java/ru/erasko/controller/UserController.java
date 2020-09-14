@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping
-    public String userList(Model model) throws SQLException {
+    public String userList(Model model) throws Exception {
         logger.info("User list");
         model.addAttribute("users", userMapper.findAll());
         model.addAttribute("account", accountMapper.findAll());
@@ -64,10 +64,10 @@ public class UserController {
     }
 
     @GetMapping("edit")
-    public String createUser(@RequestParam("id") Long id, Model model) throws SQLException {
+    public String createUser(@RequestParam("id") Long id, Model model) throws Exception {
         logger.info("Edit user width id {} ", id);
 
-        model.addAttribute("user", userMapper.findById(id));
+        model.addAttribute("user", userMapper.getUserById(id));
         model.addAttribute("roles", roleMapper.findAll());
         model.addAttribute("account", accountMapper.findAll());
         return "user-form";
