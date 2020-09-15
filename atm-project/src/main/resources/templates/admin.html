@@ -56,8 +56,9 @@
         <h5 class="mb-4">Report about authUser</h5>
         <span th:text="${report.getReportMessage()}"></span>
         <br><br>
-        <form>
-            <button type="submit" class="btn btn-secondary">Write</button>
+        <form  id="writeForm" th:action="@{/writeInfo}"  method="post">
+            <button type="submit" class="btn btn-secondary">Write info to file</button>
+
         </form>
     </div>
 </div>
