@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" xmlns:th ="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome-all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootadmin.min.css}">
+
+    <title>Admin</title>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand navbar-dark bg-primary">
+    <a class="navbar-brand" th:href="@{/}">ATM</a>
+    Logged user: <span sec:authentication="name">UserName</span>
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0 bg-light"
+                      th:action="@{/logout}"  method="post">
+                    <button class="btn btn-outline-success my-2 my-sm-0">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div class="sidebar sidebar-dark bg-dark">
+        <ul class="list-unstyled">
+            <li><!-- только для не аутентифицированным пользователям -->
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}"> Authorizations </a>
+                </div></li>
+        </ul>
+    </div>
+
+    <div class="content p-4">
+        <h2 class="mb-4">Actions</h2>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                This page is for selecting the necessary actions
+            </div>
+        </div>
+        <!-- только аутентифицированным пользователям -->
+        <div sec:authorize="isAuthenticated()" class="mb-4">
+            <a th:href="@{/money}"> Withdrawal of Money </a>
+        </div>
+        <div sec:authorize="isAuthenticated()" class="mb-4">
+            <a th:href="@{/money}"> Depositing of Money </a>
+        </div>
+        <!-- только администраторам -->
+        <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-4">
+            <a th:href="@{/admin}"> Reading a File</a>
+        </div>
+        <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-4">
+            <a th:href="@{/user}"> Information about Users</a>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{js/jquery.min.js}"></script>
+<script th:src="@{js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{js/bootadmin.min.js}"></script>
+
+</body>
+</html>

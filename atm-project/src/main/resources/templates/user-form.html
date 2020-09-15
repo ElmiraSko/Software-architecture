@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" xmlns:th ="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome-all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootadmin.min.css}">
+
+    <title>User-form</title>
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand navbar-dark bg-primary">
+    <a class="navbar-brand" th:href="@{/}">ATM</a>
+    Logged user: <span sec:authentication="name">UserName</span>
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0 bg-light"
+                      th:action="@{/logout}"  method="post">
+                    <button class="btn btn-outline-success my-2 my-sm-0">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div class="sidebar sidebar-dark bg-dark">
+        <ul class="list-unstyled">
+            <li><!-- только аутентифицированным пользователям -->
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/money}"> Withdrawal of Money </a>
+                </div></li>
+            <li>
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/money}"> Depositing of Money </a>
+                </div></li>
+            <li><!-- только администраторам -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/admin}"> Reading a File</a>
+                </div></li>
+            <li><!-- только администраторам -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/user}">Information about Users</a>
+                </div></li>
+        </ul>
+    </div>
+    <div class="content p-4">
+        <h2 class="mb-4">User Form</h2>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <p>User form</p>
+                <form th:action="@{/user/save}" method="post" th:object="${user}">
+                    <input th:type="hidden" th:field="*{id}"/>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" th:field="*{name}" class="form-control"
+                               placeholder="Enter name"/>
+                        <small id="nameError" class="form-text text-muted"
+                               th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                            name error</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" th:field="*{password}" class="form-control"
+                               placeholder="Enter password"/>
+                        <small id="passError" class="form-text text-muted"
+                               th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                            password error</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="account">Account</label>
+                        <input type="text" id="account" th:field="*{account.accountNumber}" class="form-control"
+                               placeholder="Enter account"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="roles">Roles</label>
+                        <select multiple class="form-control" id="roles" th:field="*{roles}" required>
+                            <option th:each="role : ${roles}"
+                                    th:text="${role.name}"
+                                    th:value="${role.id}"
+                                    th:selected="${user.roles?.contains(role)}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{js/jquery.min.js}"></script>
+<script th:src="@{js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{js/bootadmin.min.js}"></script>
+
+</body>
+</html>

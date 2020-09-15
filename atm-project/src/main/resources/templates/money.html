@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" xmlns:th ="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome-all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootadmin.min.css}">
+
+    <title>Admin</title>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand navbar-dark bg-primary">
+    <a class="navbar-brand" th:href="@{/}">ATM</a>
+    Logged user: <span sec:authentication="name">UserName</span>
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0 bg-light"
+                      th:action="@{/logout}"  method="post">
+                    <button class="btn btn-outline-success my-2 my-sm-0">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div class="sidebar sidebar-dark bg-dark">
+        <ul class="list-unstyled">
+            <li><!-- только аутентифицированным пользователям -->
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/money}"> Withdrawal of Money </a>
+                </div></li>
+            <li>
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/money}"> Depositing of Money </a>
+                </div></li>
+            <li><!-- только администраторам -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/admin}"> Reading a File</a>
+                </div></li>
+            <li><!-- только администраторам -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/user}"> Information about Users</a>
+                </div></li>
+        </ul>
+    </div>
+
+    <div class="content p-4">
+        <h2 class="mb-4">Money</h2>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                This page is for selecting the necessary actions
+            </div>
+        </div>
+
+            <table id="users_table" class="table table-hover" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>AccountId</th>
+                    <th>AccountNumber</th>
+                    <th>Sum</th>
+                    <th>User</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${account.id}">AccountId</td>
+                    <td th:text="${account.accountNumber}">AccountNumber</td>
+                    <td th:text="${account.sum}">Sum</td>
+                    <td th:text="${account.user}">User</td>
+                </tr>
+                </tbody>
+            </table>
+
+        <form th:action="@{/money}" method="post" th:object="${account}">
+            <input th:type="hidden" th:field="*{id}"/>
+
+            <div class="form-group">
+                <label for="put">The amount</label>
+                <input type="number" id="put" th:field="*{actionSum}" class="form-control"
+                       placeholder="Enter actionSum"/>
+                <label for="put">Enter "d" to Deposit money or any letter for Withdrawing money</label>
+                <input type="text" id="action" th:field="*{action}" class="form-control"
+                       placeholder="Enter action"/>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </div>
+</div>
+
+<script th:src="@{js/jquery.min.js}"></script>
+<script th:src="@{js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{js/bootadmin.min.js}"></script>
+
+</body>
+</html>
