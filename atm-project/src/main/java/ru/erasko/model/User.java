@@ -76,11 +76,23 @@ import java.util.List;
         this.account = account;
     }
 
+//    @Override
+//    public String toString() {
+//        return "User{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                '}';
+//    }
+
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", account=" + account +
                 '}';
     }
 }

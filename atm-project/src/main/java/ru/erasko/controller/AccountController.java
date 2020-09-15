@@ -10,36 +10,36 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.erasko.mapper.AccountMapper;
+import ru.erasko.mapper.UserMapper;
 import ru.erasko.model.Account;
 import ru.erasko.model.User;
-import ru.erasko.repository.AccountRepository;
-import ru.erasko.repository.UserRepository;
 
-import java.util.Optional;
+import java.sql.SQLException;
 
 @RequestMapping("/money")
 @Controller
 public class AccountController {
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
 
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
+    private final AccountMapper accountMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public AccountController(AccountRepository accountRepository, UserRepository userRepository) {
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
+    public AccountController(AccountMapper accountMapper, UserMapper userMapper) {
+        this.accountMapper = accountMapper;
+        this.userMapper = userMapper;
     }
 
     @GetMapping()
-    public String getAccount(Model model) {
+    public String getAccount(Model model) throws SQLException {
         // авторизованный пользователь
-        Optional<User> user = userRepository.findByName(getCurrentUsername());
-        if (user.isPresent()) {
-            String accNumber = user.get().getAccount().getAccountNumber();
-            Account usAccount = accountRepository.findByAccountNumber(accNumber).get();
+        User user = userMapper.findByName(getCurrentUsername());
+        if (user != null) {
+            String accNumber = user.getAccount().getAccountNumber();
+            Account usAccount = accountMapper.findByNumber(accNumber);
             model.addAttribute("account", usAccount);
-        }
+            }
         return "money";
     }
 
@@ -49,12 +49,12 @@ public class AccountController {
     }
 
     @PostMapping()
-    public String depositing(Account account) {
+    public String depositing(Account account) throws Exception {
         logger.info("depositing = " + account.getId() + ", "
                 + account.getActionSum() + ", " + account.getAction());
         int accSum = account.getActionSum();
 
-        Account accountDb = accountRepository.findById(account.getId()).get();
+        Account accountDb = accountMapper.getAccountById(account.getId());
 
         if (account.getAction().equals("d")) {
             accountDb.setSum(accountDb.getSum()+accSum);
@@ -63,7 +63,7 @@ public class AccountController {
             accountDb.setSum(accountDb.getSum()-accSum);
         }
 
-        accountRepository.save(accountDb);
+        accountMapper.insert(accountDb);
 
         return "redirect:/money";
     }

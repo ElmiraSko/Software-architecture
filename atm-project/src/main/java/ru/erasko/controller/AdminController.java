@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.erasko.forIterator.UserInfo;
+import ru.erasko.mapper.RoleMapper;
+import ru.erasko.mapper.UserMapper;
+import ru.erasko.model.Role;
 import ru.erasko.model.User;
 import ru.erasko.repository.UserRepository;
 import ru.erasko.rest.Report;
@@ -19,7 +22,9 @@ import ru.erasko.rest.ReportBuilder;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,12 +33,10 @@ public class AdminController {
 
     private final UserRepository userRepository;
 
-
     @Autowired
     public AdminController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
     @GetMapping("/")
     public String indexPage() {
