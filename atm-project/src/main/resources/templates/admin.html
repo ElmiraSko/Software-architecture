@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" xmlns:th ="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome-all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootadmin.min.css}">
+
+    <title>Admin</title>
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand navbar-dark bg-primary">
+    <a class="navbar-brand" th:href="@{/}">ATM</a>
+    Logged user: <span sec:authentication="name">UserName</span>
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav ml-auto">
+            <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0 bg-light"
+                  th:action="@{/logout}"  method="post">
+                <button class="btn btn-outline-success my-2 my-sm-0">Logout</button>
+            </form>
+        </ul>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div class="sidebar sidebar-dark bg-dark">
+        <ul class="list-unstyled">
+            <li><!-- только аутентифицированным пользователям -->
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/user}"> Withdrawal of Money </a>
+                </div></li>
+            <li>
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/user}"> Depositing of Money </a>
+                </div></li>
+            <li><!-- только администраторам -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/admin}"> Reading a File</a>
+                </div></li>
+            <li><!-- только администраторам -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/user}"> Information about Users</a>
+                </div></li>
+        </ul>
+    </div>
+
+    <div class="content p-4">
+        <h2 class="mb-4">Work with files</h2>
+        <h5 class="mb-4">Report about authUser</h5>
+        <span th:text="${report.getReportMessage()}"></span>
+        <br><br>
+        <form>
+            <button type="submit" class="btn btn-secondary">Write</button>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/bootadmin.min.js}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#users_table').DataTable();
+    });
+</script>
+
+</body>
+</html>
