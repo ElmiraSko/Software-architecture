@@ -10,9 +10,14 @@ import ru.erasko.mapper.AccountMapper;
 import ru.erasko.mapper.RoleMapper;
 import ru.erasko.mapper.UserMapper;
 import ru.erasko.model.Account;
+import ru.erasko.model.Role;
 import ru.erasko.model.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RequestMapping("/user")
 @Controller
@@ -51,14 +56,40 @@ public class UserController {
     @PostMapping("save")
     public String saveUser(User user) throws SQLException {
 
+        boolean isSave = true;
         String number = user.getAccount().getAccountNumber();
+        List<Role> newRoles = user.getRoles();
+
+        // проверка ролей
+        List<Role> oldRoles = null;
+        try {
+            oldRoles = userMapper.getUserById(user.getId()).getRoles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (oldRoles != null) {
+            if (newRoles.size() < oldRoles.size()) {
+                isSave = false;
+            }
+
+            Set<Role> roles = new HashSet<>(newRoles);
+            for (Role role : oldRoles) {
+                if (roles.contains(role)) {
+                    roles.remove(role);
+                } else {
+                    roles.add(role);
+                }
+            }
+            newRoles = new ArrayList<>(roles);
+        }
 
         if (accountMapper.findByNumber(number) == null) {
             accountMapper.insert(new Account(-1L, number, 0, user));
             Long accId = accountMapper.findByNumber(number).getId();
-            userMapper.insert(user, accId);
+            userMapper.insert(user, accId, newRoles);
         } else {
-            userMapper.update(user);
+            Long accId = accountMapper.findByNumber(number).getId();
+            userMapper.update(user, accId, newRoles, isSave);
         }
         return "redirect:/user";
     }
