@@ -57,9 +57,9 @@ public class UserController {
     public String saveUser(User user) throws SQLException {
 
         boolean isSave = true;
-        String number = user.getAccount().getAccountNumber();
-        List<Role> newRoles = user.getRoles();
-
+        String number = user.getAccount().getAccountNumber(); // назначенный номер счета
+        List<Role> newRoles = user.getRoles(); // назначенные юзеру роли
+// здесь нужно пересмотреть логику, необходимо перечисление: сохранить, удалить, обновить?
         // проверка ролей
         List<Role> oldRoles = null;
         try {
@@ -67,20 +67,23 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (oldRoles != null) {
-            if (newRoles.size() < oldRoles.size()) {
-                isSave = false;
+
+        if (oldRoles != null) { // если роли были
+            if (newRoles.size() != oldRoles.size()) { // если количество ролей не совпадает
+                if (newRoles.size() < oldRoles.size()) {
+                    isSave = false; // если количество новых ролей стало меньше
+                }
+                Set<Role> roles = new HashSet<>(newRoles);
+                for (Role role : oldRoles) {
+                    if (roles.contains(role)) {
+                        roles.remove(role);
+                    } else {
+                        roles.add(role);
+                    }
+                } // находим разницу
+                newRoles = new ArrayList<>(roles);
             }
 
-            Set<Role> roles = new HashSet<>(newRoles);
-            for (Role role : oldRoles) {
-                if (roles.contains(role)) {
-                    roles.remove(role);
-                } else {
-                    roles.add(role);
-                }
-            }
-            newRoles = new ArrayList<>(roles);
         }
 
         if (accountMapper.findByNumber(number) == null) {
